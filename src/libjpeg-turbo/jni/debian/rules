@@ -1,0 +1,85 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# for architecture dependent variables and changelog vars
+vafilt = $(subst $(2)=,,$(filter $(2)=%,$(1)))
+
+DPKG_VARS               := $(shell dpkg-architecture)
+DEB_BUILD_GNU_TYPE	?= $(call vafilt,$(DPKG_VARS),DEB_BUILD_GNU_TYPE)
+DEB_HOST_GNU_TYPE	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_GNU_TYPE)
+DEB_HOST_MULTIARCH	?= $(call vafilt,$(DPKG_VARS),DEB_HOST_MULTIARCH)
+
+CFLAGS ?= $(shell dpkg-buildflags --get CFLAGS)
+ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -Wall
+endif
+
+ifeq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+CC = gcc
+else
+CC = $(DEB_HOST_GNU_TYPE)-gcc
+endif
+
+%:
+	dh $@  --with autoreconf
+
+override_dh_auto_configure:
+	dh_auto_configure -v -- --with-jpeg8 CFLAGS="$(CFLAGS)"
+
+override_dh_auto_build:
+	dh_auto_build -v
+	$(MAKE) -C debian/extra CC=$(CC) CFLAGS="$(CFLAGS) -Wall"
+
+override_dh_install:
+	$(MAKE) -C debian/extra install prefix=/usr DESTDIR=$(CURDIR)/debian/tmp
+	dh_install
+	: # fix jconfig.h 
+	rm -f debian/tmp/usr/include/jconfig.h
+	mkdir -p debian/tmp/usr/include/$(DEB_HOST_MULTIARCH)
+	sed -e "s/#\(undef\|define\) HAVE_\(LOCALE\|\(STD\(DEF\|LIB\)\)\)_H 1//g" \
+		jconfig.h > debian/tmp/usr/include/$(DEB_HOST_MULTIARCH)/jconfig.h
+
+override_dh_installchangelogs:
+	dh_installchangelogs -plibjpeg-turbo8-dev change.log
+	dh_installchangelogs -Nlibjpeg-turbo8-dev
+
+override_dh_strip:
+	dh_strip -plibjpeg-turbo8 --dbg-package=libjpeg-turbo8-dbg
+	dh_strip -Nlibjpeg-turbo8 libjpeg-turbo8-dbg
+
+override_dh_makeshlibs:
+	: # keep the original libjpeg symbol version
+	dh_makeshlibs -- -v8c
+	: # ... and mark libjpeg-turbo only symbols with a different version
+	sed -i "$$(for i in $$(cat debian/libjpeg-turbo-only.symbols); do echo "/^ $$i/s/8c$$/8c-2ubuntu5~/;"; done)" debian/libjpeg-turbo8/DEBIAN/symbols
+
+override_dh_auto_test:
+
+override_dh_auto_clean:
+	dh_auto_clean
+	$(MAKE) -C debian/extra clean
+	rm -f simd/jsimdcfg.inc
+
+deb_source := $(shell dpkg-parsechangelog | sed -n 's/^Source: //p')
+svn_rev := $(shell dpkg-parsechangelog | sed -rne 's,^Version: .*[+~]svn([0-9]+).*,\1,p')
+upstream_version := $(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
+
+.PHONY: get-orig-source
+get-orig-source:
+	rm -rf $(deb_source)-$(upstream_version).orig
+	rm -f $(deb_source)-$(upstream_version).orig.tar.gz
+	svn -q export -r $(svn_rev) https://libjpeg-turbo.svn.sourceforge.net/svnroot/libjpeg-turbo/trunk \
+		$(deb_source)-$(upstream_version).orig
+	GZIP=--best tar -cz --owner root --group root --mode a+rX \
+	     -f $(deb_source)_$(upstream_version).orig.tar.gz \
+	     $(deb_source)-$(upstream_version).orig
+	rm -r $(deb_source)-$(upstream_version).orig
+

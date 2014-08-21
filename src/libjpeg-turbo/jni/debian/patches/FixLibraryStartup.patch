@@ -1,0 +1,730 @@
+diff -uNr -x .bzr libjpeg-turbo-1.1.90+svn702/Makefile.am libjpeg-turbo.now/Makefile.am
+--- libjpeg-turbo-1.1.90+svn702/Makefile.am	2011-05-26 10:45:06.000000000 +0000
++++ libjpeg-turbo.now/Makefile.am	2011-09-22 18:25:08.000000000 +0000
+@@ -7,7 +7,7 @@
+ HDRS = jchuff.h jdct.h jdhuff.h jerror.h jinclude.h jmemsys.h jmorecfg.h \
+ 	jpegint.h jpeglib.h jversion.h jsimd.h jsimddct.h jpegcomp.h
+ 
+-libjpeg_la_SOURCES = $(HDRS) jcapimin.c jcapistd.c jccoefct.c jccolor.c \
++libjpeg_la_SOURCES = $(HDRS) jlibinit.c jcapimin.c jcapistd.c jccoefct.c jccolor.c \
+ 	jcdctmgr.c jchuff.c jcinit.c jcmainct.c jcmarker.c jcmaster.c \
+ 	jcomapi.c jcparam.c jcphuff.c jcprepct.c jcsample.c jctrans.c \
+ 	jdapimin.c jdapistd.c jdatadst.c jdatasrc.c jdcoefct.c jdcolor.c \
+diff -uNr -x .bzr libjpeg-turbo-1.1.90+svn702/jlibinit.c libjpeg-turbo.now/jlibinit.c
+--- libjpeg-turbo-1.1.90+svn702/jlibinit.c	1970-01-01 00:00:00.000000000 +0000
++++ libjpeg-turbo.now/jlibinit.c	2011-09-22 18:25:08.000000000 +0000
+@@ -0,0 +1,149 @@
++/*
++ * jlibinit.c
++ *
++ * Copyright 2011 Tom Gall <tom.gall@linaro.org> for Linaro Limited
++ *
++ * This file is for library initialization
++ * Alg notes:
++ *   At the time the library is loaded, libjpeg_general_init is called
++ *     this will run before main, in the case that the library is NOT
++ *     loaded via dlopen
++ *   libjpeg_general_init will call libjpeg_arch_specific_init which
++ *     if there is work to do should be implemented by each architecture
++ *     otherwise the empty stub will be called.
++ * 
++ *   Example: In the case of arm, we want to query the auxv to 
++ *   determine if neon hardware is present. Further if present
++ *   functional pointers can be setup such that the simd versions
++ *   will be used.
++ */
++
++#include <link.h>
++#include <elf.h>
++#include <malloc.h>
++#include <unistd.h>
++#include <stdio.h>
++
++#include "jinclude.h"
++#include "jpeglib.h"
++#include "jsimd.h"
++
++#if defined(__linux__) || defined(__APPLE__)
++LOCAL(void) libjpeg_arch_specific_init(void);
++
++GLOBAL(void __attribute__ ((constructor))) libjpeg_general_init(void);
++
++#if !defined(__APPLE__)
++volatile ElfW(auxv_t) *auxv = NULL;
++
++LOCAL(ElfW(auxv_t) *)get_auxv(void)
++{
++  FILE *auxv_f;
++  ElfW(auxv_t) auxv_struct;
++  int i = 0;
++
++  if(auxv == NULL) {
++    auxv_f = fopen("/proc/self/auxv", "r");
++
++    if(auxv_f == 0) {
++       perror("Error opening file for reading");
++          return 0;
++    }
++    auxv =(ElfW(auxv_t) *)malloc(getpagesize());
++
++    do
++      {
++      fread(&auxv_struct, sizeof(ElfW(auxv_t)), 1, auxv_f);
++      auxv[i] = auxv_struct;
++      i++;
++      } while(auxv_struct.a_type != AT_NULL);
++  }
++  return auxv;
++}
++#else
++
++/* For OSes without an auxv implementation
++ */
++LOCAL(ElfW(auxv_t) *)get_auxv(void)
++{
++}
++
++#endif /* if not on apple */
++
++/* 
++ * Runs immediately after library load (and before main() unless
++ * dlopen is used.
++ */
++GLOBAL(void __attribute__ ((constructor))) libjpeg_general_init(void) 
++{
++  // Architecture independent library init
++
++  get_auxv();
++
++  // call to arch specific init
++  libjpeg_arch_specific_init();
++}
++
++#if defined(__arm__) || defined(__i386__)
++
++LOCAL(void) libjpeg_arch_specific_init(void) 
++{
++
++  init_simd();
++
++}
++#elif defined(__x86_64__)
++
++LOCAL(void) libjpeg_arch_specific_init(void) 
++{
++
++}
++
++#else
++
++/*
++ * empty stub for architectures that don't define an arch specific
++ * init routine.
++ */
++LOCAL(void) libjpeg_arch_specific_init(void) 
++{
++
++}
++
++#endif /* __arch__ */
++
++
++
++#elif defined(_WIN32) /* Windows */
++
++GLOBAL (BOOL) WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason,
++      LPVOID lpReserved)
++{
++  switch(fdwReason) {
++    case DLL_PROCESS_ATTACH:
++      // call to arch specific init
++      libjpeg_arch_specific_init();
++      break
++    case DLL_PROCESS_DETACH:
++      break
++  }
++
++  return (TRUE);
++}
++
++#if defined(__i386__)
++
++LOCAL(void) libjpeg_arch_specific_init(void) 
++{
++
++  init_simd();
++
++}
++#elif defined(__x86_64__)
++
++LOCAL(void) libjpeg_arch_specific_init(void) 
++{
++
++}
++#endif /* arch for Windows */
++#endif /* __linux__ __APPLE__  */
+diff -uNr -x .bzr libjpeg-turbo-1.1.90+svn702/jsimd.h libjpeg-turbo.now/jsimd.h
+--- libjpeg-turbo-1.1.90+svn702/jsimd.h	2011-02-18 20:43:04.000000000 +0000
++++ libjpeg-turbo.now/jsimd.h	2011-09-22 18:25:08.000000000 +0000
+@@ -37,6 +37,8 @@
+ #define jsimd_h2v1_merged_upsample        jSH2V1MUp
+ #endif /* NEED_SHORT_EXTERNAL_NAMES */
+ 
++
++EXTERN(void) init_simd JPP((void));
+ EXTERN(int) jsimd_can_rgb_ycc JPP((void));
+ EXTERN(int) jsimd_can_rgb_gray JPP((void));
+ EXTERN(int) jsimd_can_ycc_rgb JPP((void));
+diff -uNr -x .bzr libjpeg-turbo-1.1.90+svn702/simd/jsimd_arm.c libjpeg-turbo.now/simd/jsimd_arm.c
+--- libjpeg-turbo-1.1.90+svn702/simd/jsimd_arm.c	2011-08-22 13:48:01.000000000 +0000
++++ libjpeg-turbo.now/simd/jsimd_arm.c	2011-09-22 18:25:08.000000000 +0000
+@@ -15,6 +15,13 @@
+  * Based on the stubs from 'jsimd_none.c'
+  */
+ 
++#include <stdio.h>
++#include <link.h>
++#include <elf.h>
++#include <asm/hwcap.h>
++#include <string.h>
++#include <ctype.h>
++
+ #define JPEG_INTERNALS
+ #include "../jinclude.h"
+ #include "../jpeglib.h"
+@@ -23,105 +30,30 @@
+ #include "../jsimddct.h"
+ #include "jsimd.h"
+ 
+-#include <stdio.h>
+-#include <string.h>
+-#include <ctype.h>
+-
+ static unsigned int simd_support = ~0;
+ 
+-#if defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+-
+-#define SOMEWHAT_SANE_PROC_CPUINFO_SIZE_LIMIT (1024 * 1024)
+-
+-LOCAL(int)
+-check_feature (char *buffer, char *feature)
+-{
+-  char *p;
+-  if (*feature == 0)
+-    return 0;
+-  if (strncmp(buffer, "Features", 8) != 0)
+-    return 0;
+-  buffer += 8;
+-  while (isspace(*buffer))
+-    buffer++;
+-
+-  /* Check if 'feature' is present in the buffer as a separate word */
+-  while ((p = strstr(buffer, feature))) {
+-    if (p > buffer && !isspace(*(p - 1))) {
+-      buffer++;
+-      continue;
+-    }
+-    p += strlen(feature);
+-    if (*p != 0 && !isspace(*p)) {
+-      buffer++;
+-      continue;
+-    }
+-    return 1;
+-  }
+-  return 0;
+-}
+-
+-LOCAL(int)
+-parse_proc_cpuinfo (int bufsize)
+-{
+-  char *buffer = (char *)malloc(bufsize);
+-  FILE *fd;
+-  simd_support = 0;
+-
+-  if (!buffer)
+-    return 0;
+-
+-  fd = fopen("/proc/cpuinfo", "r");
+-  if (fd) {
+-    while (fgets(buffer, bufsize, fd)) {
+-      if (!strchr(buffer, '\n') && !feof(fd)) {
+-        /* "impossible" happened - insufficient size of the buffer! */
+-        fclose(fd);
+-        free(buffer);
+-        return 0;
+-      }
+-      if (check_feature(buffer, "neon"))
+-        simd_support |= JSIMD_ARM_NEON;
+-    }
+-    fclose(fd);
+-  }
+-  free(buffer);
+-  return 1;
+-}
+-
+-#endif
++extern volatile ElfW(auxv_t) *auxv;
+ 
+ /*
+  * Check what SIMD accelerations are supported.
+- *
+- * FIXME: This code is racy under a multi-threaded environment.
++ * this is called once and ONLY once from libjpeg_general_init
+  */
+-LOCAL(void)
++GLOBAL(void)
+ init_simd (void)
+ {
+-  char *env = NULL;
+-#if !defined(__ARM_NEON__) && defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+-  int bufsize = 1024; /* an initial guess for the line buffer size limit */
+-#endif
++  char *env=NULL;
++  ElfW(auxv_t) *tauxv=(ElfW(auxv_t) *)auxv;
+ 
+   if (simd_support != ~0)
+     return;
+-
+   simd_support = 0;
+ 
+-#if defined(__ARM_NEON__)
+-  simd_support |= JSIMD_ARM_NEON;
+-#elif defined(__linux__) || defined(ANDROID) || defined(__ANDROID__)
+-  /* We still have a chance to use NEON regardless of globally used
+-   * -mcpu/-mfpu options passed to gcc by performing runtime detection via
+-   * /proc/cpuinfo parsing on linux/android */
+-  while (!parse_proc_cpuinfo(bufsize)) {
+-    bufsize *= 2;
+-    if (bufsize > SOMEWHAT_SANE_PROC_CPUINFO_SIZE_LIMIT)
+-      break;
+-  }
+-#endif
++  while (tauxv && tauxv->a_type != AT_HWCAP)
++    tauxv++;
+ 
++  if( tauxv && tauxv->a_un.a_val & HWCAP_NEON ) 
++    simd_support |= JSIMD_ARM_NEON;
++  
+   /* Force different settings through environment variables */
+   env = getenv("JSIMD_FORCE_ARM_NEON");
+   if ((env != NULL) && (strcmp(env, "1") == 0))
+@@ -134,8 +66,6 @@
+ GLOBAL(int)
+ jsimd_can_rgb_ycc (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -153,16 +83,12 @@
+ GLOBAL(int)
+ jsimd_can_rgb_gray (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+ GLOBAL(int)
+ jsimd_can_ycc_rgb (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -260,16 +186,12 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_downsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+ GLOBAL(int)
+ jsimd_can_h2v1_downsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -288,16 +210,12 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_upsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+ GLOBAL(int)
+ jsimd_can_h2v1_upsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -320,16 +238,12 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_fancy_upsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+ GLOBAL(int)
+ jsimd_can_h2v1_fancy_upsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -352,16 +266,12 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_merged_upsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+ GLOBAL(int)
+ jsimd_can_h2v1_merged_upsample (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -384,8 +294,6 @@
+ GLOBAL(int)
+ jsimd_can_convsamp (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -405,8 +313,6 @@
+ GLOBAL(int)
+ jsimd_can_convsamp_float (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -427,16 +333,12 @@
+ GLOBAL(int)
+ jsimd_can_fdct_islow (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+ GLOBAL(int)
+ jsimd_can_fdct_ifast (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -452,8 +354,6 @@
+ GLOBAL(int)
+ jsimd_can_fdct_float (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -477,8 +377,6 @@
+ GLOBAL(int)
+ jsimd_can_quantize (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -496,8 +394,6 @@
+ GLOBAL(int)
+ jsimd_can_quantize_float (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+@@ -518,8 +414,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_2x2 (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -541,8 +435,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_4x4 (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -582,8 +474,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_islow (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -605,8 +495,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_ifast (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -630,8 +518,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_float (void)
+ {
+-  init_simd();
+-
+   return 0;
+ }
+ 
+diff -uNr -x .bzr libjpeg-turbo-1.1.90+svn702/simd/jsimd_i386.c libjpeg-turbo.now/simd/jsimd_i386.c
+--- libjpeg-turbo-1.1.90+svn702/simd/jsimd_i386.c	2011-02-18 20:51:10.000000000 +0000
++++ libjpeg-turbo.now/simd/jsimd_i386.c	2011-09-22 18:25:08.000000000 +0000
+@@ -36,7 +36,7 @@
+  *
+  * FIXME: This code is racy under a multi-threaded environment.
+  */
+-LOCAL(void)
++GLOBAL(void)
+ init_simd (void)
+ {
+   char *env = NULL;
+@@ -64,8 +64,6 @@
+ GLOBAL(int)
+ jsimd_can_rgb_ycc (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -86,8 +84,6 @@
+ GLOBAL(int)
+ jsimd_can_rgb_gray (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -108,8 +104,6 @@
+ GLOBAL(int)
+ jsimd_can_ycc_rgb (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -277,8 +271,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_downsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -296,8 +288,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v1_downsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -343,8 +333,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_upsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -362,8 +350,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v1_upsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -409,8 +395,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_fancy_upsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -429,8 +413,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v1_fancy_upsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -479,8 +461,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v2_merged_upsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -499,8 +479,6 @@
+ GLOBAL(int)
+ jsimd_can_h2v1_merged_upsample (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (BITS_IN_JSAMPLE != 8)
+     return 0;
+@@ -619,8 +597,6 @@
+ GLOBAL(int)
+ jsimd_can_convsamp (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -642,8 +618,6 @@
+ GLOBAL(int)
+ jsimd_can_convsamp_float (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -689,8 +663,6 @@
+ GLOBAL(int)
+ jsimd_can_fdct_islow (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -708,8 +680,6 @@
+ GLOBAL(int)
+ jsimd_can_fdct_ifast (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -727,8 +697,6 @@
+ GLOBAL(int)
+ jsimd_can_fdct_float (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -773,8 +741,6 @@
+ GLOBAL(int)
+ jsimd_can_quantize (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -794,8 +760,6 @@
+ GLOBAL(int)
+ jsimd_can_quantize_float (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -839,8 +803,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_2x2 (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -864,8 +826,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_4x4 (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -911,8 +871,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_islow (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -936,8 +894,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_ifast (void)
+ {
+-  init_simd();
+-
+   /* The code is optimised for these values only */
+   if (DCTSIZE != 8)
+     return 0;
+@@ -963,8 +919,6 @@
+ GLOBAL(int)
+ jsimd_can_idct_float (void)
+ {
+-  init_simd();
+-
+   if (DCTSIZE != 8)
+     return 0;
+   if (sizeof(JCOEF) != 2)

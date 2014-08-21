@@ -1,0 +1,55 @@
+libjpeg-turbo (1.1.90+svn733-0ubuntu2) precise; urgency=low
+
+  * Sync with upstream to svn733.
+
+  * Rename libjpeg-test to libjpeg-turbo-test.
+  * Rename libjpeg-turbo-dbg to libjpeg-turbo8-dbg.
+  * Rename libjpeg8-dev to libjpeg-turbo8-dev.
+  * Move the docs into the -dev package, install the upstream changelog
+    in the -dev only.
+  * Split out libturbojpeg.so into it's own package, don't let
+    libjpeg-turbo8-dev depend on it.
+  * Fix libjpeg-turbo8-dbg package description.
+  * Install jconfig.h into multiarch include path.
+  * Remove HAVE_STD{LIB,DEF}_H from jconfig.h since they are not used and
+    conflict with autoconf.
+  * libjpeg-turbo8:
+    - Add a symbols file, with a different version for symbols only found
+      in the libjpeg-turbo implementation.
+    - Remove the shlibs file.
+    - Breaks/Replaces libjpeg8 (<< 8c-2ubuntu5).
+  * Copy the exifautotran and jpegexiforient tools from the libjpeg8
+    sources, install into libjpeg-turbo-progs.
+  * Don't install tjbench in libjpeg-turbo-progs to avoid dependency
+    on libturbojpeg.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue, 20 Dec 2011 23:12:52 +0100
+
+libjpeg-turbo (1.1.90+svn722-1ubuntu5) precise; urgency=low
+
+  * Remove all useage of diverts in preparation to replace
+    libjpeg8 in precise
+  * small clean up in debian/control
+
+ -- Tom Gall <tom.gall@linaro.org>  Thu, 01 Dec 2011 09:50:26 -0600
+
+libjpeg-turbo (1.1.90+svn722-1ubuntu4) precise; urgency=low
+
+  * Switch package to include libjpeg8 compatibility
+  * Supply -dev -dbg and -test debs
+
+ -- Tom Gall <tom.gall@linaro.org>  Wed, 16 Nov 2011 22:14:00 +0000
+
+libjpeg-turbo (1.1.90+svn722-1ubuntu2) oneiric; urgency=low
+
+  * 11.11 Release
+  * Sync with upstream to svn722
+
+ -- Tom Gall <tom.gall@linaro.org>  Wed, 16 Nov 2011 14:32:12 +0000
+
+libjpeg-turbo (1.1.90+svn702-0ubuntu1) oneiric; urgency=low
+
+  * Initial Release based on svn 702
+  * Initial Release and packaging based on svn 702 (LP: #852207)
+
+ -- Tom Gall <tom.gall@linaro.org>  Tue, 13 Sep 2011 03:53:56 +0000

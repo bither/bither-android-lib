@@ -1,0 +1,4 @@
+usr/include
+usr/lib/*/libjpeg.a
+usr/lib/*/libturbojpeg.a
+usr/lib/*/libjpeg.so
