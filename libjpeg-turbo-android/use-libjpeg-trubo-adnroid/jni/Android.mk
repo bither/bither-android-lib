@@ -22,20 +22,20 @@ LOCAL_SRC_FILES := libjpegpi.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 #crypt
-include $(CLEAR_VARS)
-LOCAL_MODULE    := piutil
-LOCAL_SRC_FILES := crypt.c
-LOCAL_LDLIBS := -lcrypto
-LOCAL_C_INCLUDES := $(LOCAL_PATH) \
+#include $(CLEAR_VARS)
+#LOCAL_MODULE    := piutil
+#LOCAL_SRC_FILES := crypt.c
+#LOCAL_LDLIBS := -lcrypto
+#LOCAL_C_INCLUDES := $(LOCAL_PATH) \
 					$(LOCAL_PATH)/crypto
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 
 #
 include $(CLEAR_VARS)
 LOCAL_MODULE    := pijni
 LOCAL_SRC_FILES := pilibjni.c
-LOCAL_SHARED_LIBRARIES := libjpegpi piutil
+LOCAL_SHARED_LIBRARIES := libjpegpi 
 LOCAL_LDLIBS := -ljnigraphics -llog  
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/libjpeg-turbo \

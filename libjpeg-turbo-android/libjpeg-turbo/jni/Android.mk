@@ -34,7 +34,7 @@ LOCAL_MODULE := libsimd
 include $(BUILD_STATIC_LIBRARY)
  
 ######################################################
-###           libjpeg.so                       ##
+###           libjpegpi.so                       ##
 ######################################################
  
 include $(CLEAR_VARS)
@@ -66,7 +66,7 @@ LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_STATIC_LIBRARY)
  
 LOCAL_MODULE_TAGS := debug
  
-LOCAL_MODULE := libjpeg
+LOCAL_MODULE := libjpegpi
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -82,7 +82,7 @@ cjpeg_SOURCES = cdjpeg.c cjpeg.c rdbmp.c rdgif.c \
 
 LOCAL_SRC_FILES:= $(cjpeg_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/android
@@ -110,7 +110,7 @@ djpeg_SOURCES = cdjpeg.c djpeg.c rdcolmap.c rdswitch.c \
 
 LOCAL_SRC_FILES:= $(djpeg_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/android
@@ -137,7 +137,7 @@ jpegtran_SOURCES = jpegtran.c rdswitch.c cdjpeg.c transupp.c
 
 LOCAL_SRC_FILES:= $(jpegtran_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) \
                     $(LOCAL_PATH)/android
@@ -163,7 +163,7 @@ tjunittest_SOURCES = tjunittest.c tjutil.c
 
 LOCAL_SRC_FILES:= $(tjunittest_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) 
 
@@ -189,7 +189,7 @@ tjbench_SOURCES = tjbench.c bmp.c tjutil.c rdbmp.c rdppm.c \
 
 LOCAL_SRC_FILES:= $(tjbench_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) 
 
@@ -215,7 +215,7 @@ rdjpgcom_SOURCES = rdjpgcom.c
 
 LOCAL_SRC_FILES:= $(rdjpgcom_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) 
 
@@ -240,7 +240,7 @@ wrjpgcom_SOURCES = wrjpgcom.c
 
 LOCAL_SRC_FILES:= $(wrjpgcom_SOURCES)
 
-LOCAL_SHARED_LIBRARIES := libjpeg
+LOCAL_SHARED_LIBRARIES := libjpegpi
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) 
 
