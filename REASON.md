@@ -35,5 +35,5 @@ Thanks for reading, :)
 Our project on github:
 https://github.com/bither
 
-[libjpeg] : http://en.wikipedia.org/wiki/Libjpeg
-[Skia] : http://en.wikipedia.org/wiki/Skia_Graphics_Engine
+[libjpeg]: http://en.wikipedia.org/wiki/Libjpeg
+[Skia]: http://en.wikipedia.org/wiki/Skia_Graphics_Engine
