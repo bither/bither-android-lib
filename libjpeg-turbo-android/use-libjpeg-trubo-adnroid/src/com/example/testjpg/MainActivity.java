@@ -5,13 +5,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.pi.common.util.NativeUtil;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
+import com.pi.common.util.NativeUtil;
 
 public class MainActivity extends Activity {
 
@@ -27,9 +27,12 @@ public class MainActivity extends Activity {
 				try {
 					int quality = 90;
 					InputStream in = getResources().getAssets()
-							.open("test1.jpg");
+							.open("test.jpg");
 					Bitmap bit = BitmapFactory.decodeStream(in);
-					File dirFile = getCacheDir();
+					File dirFile = getExternalCacheDir();
+					if (!dirFile.exists()) {
+						dirFile.mkdirs();
+					}
 					File originalFile = new File(dirFile, "original.jpg");
 					FileOutputStream fileOutputStream = new FileOutputStream(
 							originalFile);

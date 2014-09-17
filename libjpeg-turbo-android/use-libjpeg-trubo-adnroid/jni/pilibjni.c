@@ -22,8 +22,7 @@
 
 typedef uint8_t BYTE;
 
-//extern int encrypt(char * input, int input_len, char * output, int * en_len);
-//extern int decrypt(char * input, int en_len, char * output, int * de_len);
+en_len, char * output, int * de_len);
 char *error;
 struct my_error_mgr {
   struct jpeg_error_mgr pub;
@@ -196,37 +195,7 @@ jstring Java_com_pi_common_util_NativeUtil_compressBitmap(JNIEnv* env,
 	}
 	return (*env)->NewStringUTF(env, "1"); //success
 }
-//jbyteArray Java_com_pi_common_util_NativeUtil_decrypt(JNIEnv* env,
-//		jobject thiz, jbyteArray fileNameStr) {
-//
-//	jsize alen = (*env)->GetArrayLength(env, fileNameStr);
-//	char * sourceChar = jstrinTostring(env, fileNameStr);
-//	char result[alen];
-//	int result_len;
-//	int ret;
-//	ret = decrypt(sourceChar, alen, result, &result_len);
-//	if (ret) {
-//		return (*env)->NewStringUTF(env, "");
-//	} else {
-//		return stoJstring(env, result,result_len);
-//	}
-//
-//}
-//jbyteArray Java_com_pi_common_util_NativeUtil_encrypt(JNIEnv* env,
-//		jobject thiz, jbyteArray fileNameStr) {
-//	jsize alen = (*env)->GetArrayLength(env, fileNameStr);
-//	char * sourceChar = jstrinTostring(env, fileNameStr);
-//	char result[alen + 64];
-//	int result_len;
-//	int ret;
-//	ret = encrypt(sourceChar, alen, result, &result_len);
-//	if (ret) {
-//		return (*env)->NewStringUTF(env, "");
-//	} else {
-//		return stoJstring(env, result,result_len);
-//	}
-//
-//}
+
 
 void jstringTostring(JNIEnv* env, jstring jstr, char * output, int * de_len) {
 	*output = NULL;
