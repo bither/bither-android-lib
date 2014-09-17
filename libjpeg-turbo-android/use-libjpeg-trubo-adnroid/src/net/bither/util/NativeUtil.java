@@ -23,6 +23,14 @@ import android.graphics.Rect;
 import android.util.Log;
 
 public class NativeUtil {
+	private static int DEFAULT_QUALITY = 95;
+
+	public static void compressBitmap(Bitmap bit, String fileName,
+			boolean optimize) {
+		compressBitmap(bit, DEFAULT_QUALITY, fileName, optimize);
+
+	}
+
 	public static void compressBitmap(Bitmap bit, int quality, String fileName,
 			boolean optimize) {
 		Log.d("native", "compress of native");
