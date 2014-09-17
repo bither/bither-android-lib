@@ -1,13 +1,22 @@
-package com.pi.common.util;
+/*
+ * Copyright 2014 http://Bither.net
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+package net.bither.util;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -16,25 +25,6 @@ import android.util.Log;
 public class NativeUtil {
 	public static void compressBitmap(Bitmap bit, int quality, String fileName,
 			boolean optimize) {
-
-		// boolean checkSdk16 = ((StringUtil.compareString(Build.DEVICE,
-		// "bbk77_cu_jb")
-		// || StringUtil.compareString(Build.DEVICE, "bird77_a_twn_jb")
-		// || StringUtil.compareString(Build.DEVICE, "n821") || StringUtil
-		// .compareString(Build.DEVICE, "hwG520-5000")) && Build.VERSION.SDK_INT
-		// == 16);
-		// if (checkSdk16) {
-		// try {
-		// File file = new File(fileName);
-		// bit.compress(CompressFormat.JPEG, 70,
-		// new FileOutputStream(file));
-		// LogUtil.d("native", "compress of bitmap");
-		// } catch (FileNotFoundException e) {
-		// e.printStackTrace();
-		// }
-		// return;
-		// }
-
 		Log.d("native", "compress of native");
 		if (bit.getConfig() != Config.ARGB_8888) {
 			Bitmap result = null;
@@ -59,21 +49,12 @@ public class NativeUtil {
 
 	}
 
-	public static boolean isInteger(Object obj) {
-		try {
-			Integer.parseInt(obj.toString());
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
 	private static native String compressBitmap(Bitmap bit, int w, int h,
 			int quality, byte[] fileNameBytes, boolean optimize);
 
 	static {
-		System.loadLibrary("jpegpi");
-		System.loadLibrary("pijni");
+		System.loadLibrary("jpegbither");
+		System.loadLibrary("bitherjni");
 
 	}
 
