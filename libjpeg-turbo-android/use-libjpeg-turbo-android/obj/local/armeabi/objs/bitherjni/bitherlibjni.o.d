@@ -1,5 +1,5 @@
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/obj/local/armeabi/objs/bitherjni/bitherlibjni.o: \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/bitherlibjni.c \
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/obj/local/armeabi/objs/bitherjni/bitherlibjni.o: \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/bitherlibjni.c \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/string.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/sys/cdefs.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -37,20 +37,20 @@
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/linux/time.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/asm/siginfo.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/asm-generic/siginfo.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jpeglib.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jconfig.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jmorecfg.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/cdjpeg.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jinclude.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jpeglib.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jconfig.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jmorecfg.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/cdjpeg.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jinclude.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/stdlib.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/alloca.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/strings.h \
  /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/memory.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jpeglib.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jerror.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/cderror.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jversion.h \
- /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/android/config.h
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jpeglib.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jerror.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/cderror.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jversion.h \
+ /Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/android/config.h
 
 /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/string.h:
 
@@ -126,15 +126,15 @@
 
 /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/asm-generic/siginfo.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jpeglib.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jpeglib.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jconfig.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jconfig.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jmorecfg.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jmorecfg.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/cdjpeg.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/cdjpeg.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jinclude.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jinclude.h:
 
 /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/stdlib.h:
 
@@ -144,12 +144,12 @@
 
 /Users/nn/Documents/android-ndk-r9d/platforms/android-19/arch-arm/usr/include/memory.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jpeglib.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jpeglib.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jerror.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jerror.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/cderror.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/cderror.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/jversion.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/jversion.h:
 
-/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni/libjpeg-turbo/android/config.h:
+/Users/nn/Documents/workspace/bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni/libjpeg-turbo/android/config.h:
