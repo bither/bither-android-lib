@@ -1,3 +1,5 @@
+The reason of developping this project : [REASON.md](https://github.com/bither/bither-android-lib/blob/master/REASON.md)
+
 Buid libjpeg-turbo-android-lib
 ==================
 
@@ -20,9 +22,9 @@ You must configure the path of JDK and Android SDK.
      ../libjpeg-turbo-android/libjpeg-turbo/libs/armeabi
 
 
-4.Copy libjpegpi.so to ../bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni
+4.Copy libjpegpi.so to ../bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni
 
-     cd ../bither-android-lib/libjpeg-turbo-android/use-libjpeg-trubo-adnroid/jni
+     cd ../bither-android-lib/libjpeg-turbo-android/use-libjpeg-turbo-android/jni
 
      ndk-build
 
