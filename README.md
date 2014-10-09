@@ -1,4 +1,4 @@
-The reason of developing this project : [REASON.md](https://github.com/bither/bither-android-lib/blob/master/REASON.md)
+The reason of this project : [REASON.md](https://github.com/bither/bither-android-lib/blob/master/REASON.md)
 
 Buid libjpeg-turbo-android-lib
 ==================
