@@ -1,5 +1,7 @@
 The reason of this project : [REASON.md](https://github.com/bither/bither-android-lib/blob/master/REASON.md)
 
+Related links : [Skia Issue](https://code.google.com/p/skia/issues/detail?id=3460), [Skia Discuss](https://groups.google.com/forum/#!topic/skia-discuss/p0IcyBoU8P0)
+
 Buid libjpeg-turbo-android-lib
 ==================
 
