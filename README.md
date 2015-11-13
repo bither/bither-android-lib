@@ -17,7 +17,7 @@ You must configure the path of JDK and Android SDK.
 
     cd ../libjpeg-turbo-android/libjpeg-turbo/jni
 
-    ndk-buld
+    ndk-build
 
 3.You can get libjpegpi.so in 
 
